@@ -9,7 +9,7 @@ class SelecaoRepository {
     
     findAll() {
         const sql = "SELECT * FROM selecoes";
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     findById(id) {

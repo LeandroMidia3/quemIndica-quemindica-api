@@ -39,7 +39,7 @@ class UsuarioRepository {
 
     findAll() {
         const sql = "SELECT * FROM usuario order by nome";
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     delete(id) {

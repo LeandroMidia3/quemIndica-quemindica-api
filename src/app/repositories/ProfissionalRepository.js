@@ -41,13 +41,13 @@ class ProfissionalRepository {
     findAll() {
         console.log("CONTROLLER API findAll profissional: ");
         const sql = "SELECT * FROM profissional"; 
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     findAllToCard() {
         console.log("CONTROLLER API findAllToCard profissional: ");
         const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, p.cliques,
-                    p.avaliacaoMedia, GROUP_CONCAT(c.nome SEPARATOR ', ') AS categorias 
+                    p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
                     INNER JOIN categoria AS c ON c.idcategoria = uc.idcategoria 
@@ -57,14 +57,14 @@ class ProfissionalRepository {
                     GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
                     p.estado, p.cliques, p.avaliacaoMedia 
                     ORDER BY u.nome`
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     findToPerfil(id) {
         console.log("CONTROLLER API findToPerfil profissional: ");
         const sql = `SELECT p.idprofissional as id, u.nome, u.idusuario, p.uriImagemPrincipal, p.telefone,
                     p.cidade, p.estado, p.servico, p.descricao, p.avaliacaoMedia, p.bairro,
-                    GROUP_CONCAT(c.nome SEPARATOR ', ') AS categorias 
+                    STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
                     INNER JOIN categoria AS c ON c.idcategoria = uc.idcategoria 
@@ -73,13 +73,13 @@ class ProfissionalRepository {
                     AND p.idprofissional = ${id} 
                     GROUP BY p.idprofissional, u.nome, u.idusuario, p.uriImagemPrincipal, p.telefone, p.cidade, 
                     p.estado, p.servico, p.descricao, p.avaliacaoMedia, p.bairro`;
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     findAllFavoritoToCard(id) {
         console.log("CONTROLLER API findAllFavoritoToCard profissional: ");
         const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, 
-                    p.avaliacaoMedia, GROUP_CONCAT(c.nome SEPARATOR ', ') AS categorias 
+                    p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
                     INNER JOIN categoria AS c ON c.idcategoria = uc.idcategoria 
@@ -90,7 +90,7 @@ class ProfissionalRepository {
                     GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
                     p.estado, p.avaliacaoMedia 
                     ORDER BY u.nome`
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
 
    updateAvaliacao(avaliacaoMedia, idProfissional) {
@@ -109,7 +109,7 @@ class ProfissionalRepository {
     findAllClicado() {
         console.log("CONTROLLER API findAllToCard profissional: ");
         const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, p.cliques,
-                    p.avaliacaoMedia, GROUP_CONCAT(c.nome SEPARATOR ', ') AS categorias 
+                    p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
                     INNER JOIN categoria AS c ON c.idcategoria = uc.idcategoria 
@@ -120,7 +120,7 @@ class ProfissionalRepository {
                     GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
                     p.estado, p.cliques, p.avaliacaoMedia 
                     ORDER BY p.cliques desc, u.nome`
-        return consulta(sql, "Não foi possível obter a lista");
+        return consulta(sql, [], "Não foi possível obter a lista");
     }
     
 }
