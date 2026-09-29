@@ -1,15 +1,15 @@
-import mysql from 'mysql';
+import 'dotenv/config';
+import pkg from 'pg';
+const { Pool } = pkg;
 
- const conexao = mysql.createConnection({
-   host: 'dpg-dau1oo6k1f9s73a18ql0-a.oregon-postgres.render.com',
-   port: 5432,
-   user: 'quemindica_user',
-   password: '4CDVTnBTYM4Xn2o9p0QupXgG7XYnuqXr',
-   database: 'quemindica',
-   ssl: {
-    rejectUnauthorized: false // necessário para conexão segura no Render
+const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://quemindica_user:4CDVTnBTYM4Xn2o9p0QupXgG7XYnuqXr@dpg-dau1oo6k1f9s73a18ql0-a.oregon-postgres.render.com/quemindica';
+
+const conexao = new Pool({
+  connectionString: DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // Render exige SSL
   }
- });
+});
 
 conexao.connect((err) => {
   if (err) {
@@ -20,24 +20,22 @@ conexao.connect((err) => {
 });
 
 /**
- * execjuta uma consulta SQL no banco de dados
+ * Executa uma consulta SQL no banco de dados
  * @param {string} sql instrução SQL a ser executada
- * @param {string=id | [selecao, id]} valores a ser passados para o SQL 
+ * @param {array} valores valores a serem passados para o SQL 
  * @param {string} mensagemReject mensagem a ser exibida em caso de erro
- * @returns 
+ * @returns Promise
  */
-
-export const consulta = (sql, valores='', mensagemReject) => {
+export const consulta = (sql, valores = [], mensagemReject) => {
   return new Promise((resolve, reject) => {
-      conexao.query(sql, valores, (error, results) => {
-          if (error) {
-              console.log("Erro: " + error);
-              return reject(mensagemReject || 'Erro ao executar consulta SQL: ' + error);
-          }
-          return resolve(results);
-      });
+    conexao.query(sql, valores, (error, results) => {
+      if (error) {
+        console.log("Erro: " + error);
+        return reject(mensagemReject || 'Erro ao executar consulta SQL: ' + error);
+      }
+      return resolve(results.rows); // no pg os dados ficam em results.rows
+    });
   });
-}
-
+};
 
 export default conexao;
