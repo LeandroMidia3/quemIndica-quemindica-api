@@ -1,11 +1,14 @@
 import mysql from 'mysql';
 
  const conexao = mysql.createConnection({
-   host: 'localhost',
-   port: 3306,
-   user: 'root',
-   password: 'root',
-   database: 'quemindica'
+   host: 'dpg-dau1oo6k1f9s73a18ql0-a.oregon-postgres.render.com'',
+   port: 5432,
+   user: 'quemindica_user',
+   password: '4CDVTnBTYM4Xn2o9p0QupXgG7XYnuqXr',
+   database: 'quemindica',
+   ssl: {
+    rejectUnauthorized: false // necessário para conexão segura no Render
+  }
  });
 
 conexao.connect((err) => {
