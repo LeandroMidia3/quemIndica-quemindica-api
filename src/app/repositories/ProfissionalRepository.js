@@ -112,7 +112,7 @@ class ProfissionalRepository {
 
     updateClique(id) {
         console.log("CONTROLLER API update cliques: " + id);
-        const sql = "UPDATE profissional SET cliques = cliques + 1 WHERE idprofissional = $1";
+        const sql = "UPDATE profissional SET cliques = cliques + 1 WHERE idprofissional = $1 RETURNING cliques";
         return consulta(sql, [id], "Não foi possível atualizar os cliques do profissional");
     }
 

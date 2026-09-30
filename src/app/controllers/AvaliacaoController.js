@@ -107,13 +107,13 @@ class AvaliacaoController {
 
             console.log("row delete: " + JSON.stringify(row));
         
-            if(row.affectedRows > 0){
-                response.id = row.insertId;
+            if(row.length > 0){
+                response.id = row[0].idprofissional;
                 response.message = "Sucesso";
                 response.sucess = true;
                 response.objeto = row[0];
             }else{
-                response.id = row.insertId;
+                response.id = row[0].idprofissional;
                 response.message = "Avaliação não encontrada";
             }
         }catch(error){

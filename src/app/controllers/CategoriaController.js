@@ -92,7 +92,6 @@ class CategoriaController {
         response.id = 0;
         try{
 
-
             console.log("imagem: " + JSON.stringify(req.body));
 
             const oldCategoria = await CategoriaRepository.findById(req.params.id);
@@ -100,8 +99,8 @@ class CategoriaController {
             if(oldCategoria.length > 0 && oldCategoria[0].senha === categoria.senha){
                 const row = await CategoriaRepository.update(id, categoria);
                 
-                if(row.affectedRows > 0){
-                    response.id = parseInt(id);
+                if(row.length > 0){
+                    response.id = parseInt(row[0].idcategoria);
                     response.message = "Sucesso";
                     response.sucess = true;
                     response.objeto = categoria;

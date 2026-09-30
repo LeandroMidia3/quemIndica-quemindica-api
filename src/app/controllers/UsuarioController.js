@@ -141,8 +141,8 @@ class UsuarioController {
             if(oldUsuario.length > 0 && match){
                 const row = await UsuarioRepository.update(id, usuario);
                 console.log("row: " + JSON.stringify(row));
-                if(row.affectedRows > 0){
-                    response.id = parseInt(id);
+                if(row.length > 0){
+                    response.id = parseInt(row[0].idusuario);
                     response.message = "Sucesso";
                     response.sucess = true;
                     response.objeto = usuario;

@@ -442,8 +442,8 @@ class ProfissionalController {
         try{
 
             const cliques = await ProfissionalRepository.updateClique(id);
-            if(cliques.affectedRows > 0){
-                response.id = parseInt(id);
+            if(cliques.length > 0){
+                response.id = parseInt(cliques[0].cliques);
                 response.message = "Sucesso";
                 response.sucess = true;
             }

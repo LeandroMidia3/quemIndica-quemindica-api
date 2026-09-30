@@ -31,7 +31,7 @@ class AvaliacaoRepository {
 
     delete(id) {
         console.log("CHAMOU DELETE");
-        const sql = "DELETE FROM avaliacao WHERE idavaliacao = $1";
+        const sql = "DELETE FROM avaliacao WHERE idavaliacao = $1 RETURNING idprofissional";
         return consulta(sql, [id], "Não foi possível excluir a avaliacao");
     }
 
