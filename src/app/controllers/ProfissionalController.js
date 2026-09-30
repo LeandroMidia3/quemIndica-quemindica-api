@@ -26,7 +26,7 @@ class ProfissionalController {
             const usuarioCreate = {
                 nome: usuario.nome,
                 email: usuario.email,
-                dataCadastro: usuario.dataCadastro,
+                dataCadastro: usuario.dataCadastro ?? usuario.datacadastro ?? new Date().toISOString(),
                 perfil: usuario.perfil,
                 senha: usuario.senha,
                 status: usuario.status
@@ -34,13 +34,20 @@ class ProfissionalController {
 
             const rowEmail = await UsuarioRepository.findByEmail(usuario.email);
 
+            console.log("rowEmail: " + JSON.stringify(rowEmail));
+
             if(rowEmail.length == 0){
 
                 const hashedPassword = await PasswordService.hashPassword(usuarioCreate.senha);
-                const usuarioData = { ...usuarioCreate, senha: hashedPassword };
+                const usuarioData = {
+                    ...usuarioCreate,
+                    senha: hashedPassword,
+                    datacadastro: usuarioCreate.dataCadastro ?? new Date().toISOString()
+                };
+                delete usuarioData.dataCadastro;
                 const newUsuario = await UsuarioRepository.create(usuarioData);
 
-                profissional.idusuario = newUsuario.insertId;
+                profissional.idusuario = newUsuario[0].idusuario;
 
                 if(profissional.idusuario > 0){
                     console.log("Profissional: " + profissional);
@@ -63,23 +70,23 @@ class ProfissionalController {
                     };
                     
                     const newProfissional = await ProfissionalRepository.create(profissionalCreate);
-                    profissionalCreate.id = newProfissional.insertId;
+                    profissionalCreate.id = newProfissional[0].idprofissional;
                     console.log("newProfissional: " + JSON.stringify(newProfissional));
 
                     console.log("listaCategoria: " + profissional.categorias);
                     
                     profissional.categorias.forEach(async element => {
-                        const adicionarUsuariocategoria = await CategoriaRepository.createByProfissional(newProfissional.insertId, element);
+                        const adicionarUsuariocategoria = await CategoriaRepository.createByProfissional(newProfissional[0].idprofissional, element);
                         console.log("Categoria: " + element);
-                        console.log("profissional.id: " + newProfissional.insertId);
+                        console.log("profissional.id: " + newProfissional[0].idprofissional);
                     });
 
-                    profissionalCreate.id = newProfissional.insertId;
-                    usuarioCreate.id = newUsuario.insertId;
+                    profissionalCreate.id = newProfissional[0].idprofissional;
+                    usuarioCreate.id = newUsuario[0].idusuario;
                     profissionalCreate.usuario = usuarioCreate;
 
                     response.status = 200;
-                    response.id = newUsuario.insertId;
+                    response.id = newUsuario[0].idusuario;
                     response.message = "Sucesso";
                     response.sucess = true;
                     response.objeto = profissionalCreate
@@ -107,12 +114,12 @@ class ProfissionalController {
             const row = await ProfissionalRepository.findById(req.params.id);
             
             if(row.length > 0){
-                response.id = row.insertId;
+                response.id = row[0].idprofissional;
                 response.message = "Sucesso";
                 response.sucess = true;
                 response.objeto = row[0];
             }else{
-                response.id = row.insertId;
+                response.id = 0;
                 response.message = "Usuário ou senha inválidos";
             }
         }catch(error){
@@ -129,14 +136,16 @@ class ProfissionalController {
         response.status = 200;
         try{
             const row = await ProfissionalRepository.findByUsuarioId(req.params.id);
+
+            console.log("row: " + JSON.stringify(row));
             
             if(row.length > 0){
-                response.id = row.insertId;
+                response.id = row[0].idprofissional;
                 response.message = "Sucesso";
                 response.sucess = true;
                 response.objeto = row[0];
             }else{
-                response.id = row.insertId;
+                response.id = 0;
                 response.message = "Usuário ou senha inválidos";
             }
         }catch(error){

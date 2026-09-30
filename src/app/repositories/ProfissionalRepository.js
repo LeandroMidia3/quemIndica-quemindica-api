@@ -4,37 +4,48 @@ class ProfissionalRepository {
 
     create(profissional) {
         console.log("CONTROLLER API create profissional: " + JSON.stringify(profissional));
-        const sql = "INSERT INTO profissional SET ?";
-        return consulta(sql, profissional, "Não foi possível criar o Profissional");
+        const sql = `
+        INSERT INTO profissional (descricao,uriImagemPrincipal,telefone,disponibilidadeInicio,disponibilidadeFim,avaliacaoMedia,servico, rua,numero,bairro,estado,cidade,latitude,idusuario,cliques,status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING idprofissional`;
+
+        console.log("CONTROLLER API create profissional sql: " + sql);
+        console.log("CONTROLLER API create profissional objeto: " + JSON.stringify(profissional));
+
+        return consulta(sql, [profissional.descricao, profissional.uriImagemPrincipal, profissional.telefone, profissional.disponibilidadeInicio, 
+            profissional.disponibilidadeFim, profissional.avaliacaoMedia, profissional.servico, 
+            profissional.rua, profissional.numero, profissional.bairro, profissional.estado, 
+            profissional.cidade, profissional.latitude, profissional.idusuario, 0, 1], 
+            "Não foi possível criar o Profissional");
     }
     
     findById(id) {
         console.log("CONTROLLER API findById profissional: " + id);
-        const sql = "SELECT * FROM profissional WHERE idprofissional = ?"; 
-        return consulta(sql, id, "Não foi possível obter a lista de profissionais");
+        const sql = "SELECT * FROM profissional WHERE idprofissional = $1"; 
+        return consulta(sql, [id], "Não foi possível obter a lista de profissionais");
     }    
 
     findByUsuarioId(id) {
         console.log("CONTROLLER API findByUsuarioId profissional: " + id);
-        const sql = "SELECT * FROM profissional WHERE idusuario = ?"; 
-        return consulta(sql, id, "Não foi possível obter o profissional");
+        const sql = "SELECT * FROM profissional WHERE idusuario = $1"; 
+        return consulta(sql, [id], "Não foi possível obter o profissional");
     }   
 
     update(id, profissional) {
         console.log("CONTROLLER API update profissional: " + JSON.stringify(profissional));
-        const sql = "UPDATE profissional SET ? WHERE idprofissional = ?";
-        return consulta(sql, [profissional, id], "Não foi possível atualizar o profissional");
+        const campos = Object.keys(profissional).filter((campo) => campo !== 'idprofissional' && campo !== 'id');
+        const sql = `UPDATE profissional SET ${campos.map((campo, index) => `${campo} = $${index + 1}`).join(', ')} WHERE idprofissional = $${campos.length + 1}`;
+        const valores = [...campos.map((campo) => profissional[campo]), id];
+        return consulta(sql, valores, "Não foi possível atualizar o profissional");
     }
 
     delete(id) {
         console.log("CONTROLLER API findByUsuarioId delete: " + id);
-        const sql = "DELETE FROM profissional WHERE idprofissional = ?";
-        return consulta(sql, id, "Não foi possível excluir o profissional");
+        const sql = "DELETE FROM profissional WHERE idprofissional = $1";
+        return consulta(sql, [id], "Não foi possível excluir o profissional");
     }
 
     updateUrlImagem(url, idProfissional) {
         console.log("CONTROLLER API updateUrlImagem : " + idProfissional);
-        const sql = "UPDATE profissional SET uriImagemPrincipal = ? WHERE idprofissional = ?";
+        const sql = "UPDATE profissional SET uriImagemPrincipal = $1 WHERE idprofissional = $2";
         return consulta(sql, [url, idProfissional], "Não foi possível atualizar o profissional");
     }
 
@@ -95,14 +106,14 @@ class ProfissionalRepository {
 
    updateAvaliacao(avaliacaoMedia, idProfissional) {
         console.log("CONTROLLER API updateUrlImagem : " + idProfissional);
-        const sql = "UPDATE profissional SET avaliacaomedia = ? WHERE idprofissional = ?";
+        const sql = "UPDATE profissional SET avaliacaomedia = $1 WHERE idprofissional = $2";
         return consulta(sql, [avaliacaoMedia, idProfissional], "Não foi possível atualizar o profissional");
     }
 
     updateClique(id) {
         console.log("CONTROLLER API update cliques: " + id);
-        const sql = "UPDATE profissional SET cliques = cliques + 1 WHERE idprofissional = ?";
-        return consulta(sql, id, "Não foi possível atualizar os cliques do profissional");
+        const sql = "UPDATE profissional SET cliques = cliques + 1 WHERE idprofissional = $1";
+        return consulta(sql, [id], "Não foi possível atualizar os cliques do profissional");
     }
 
 

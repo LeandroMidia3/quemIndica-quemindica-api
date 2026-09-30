@@ -48,6 +48,14 @@ const normalizarConsultaPostgres = (sql, valores) => {
     }
   }
 
+  if (sqlFinal.includes('?')) {
+    let indice = 0;
+    sqlFinal = sqlFinal.replace(/\?/g, () => {
+      indice += 1;
+      return `$${indice}`;
+    });
+  }
+
   return { sqlFinal, parametros };
 };
 

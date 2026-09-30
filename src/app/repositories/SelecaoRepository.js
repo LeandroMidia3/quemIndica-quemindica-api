@@ -3,8 +3,9 @@ import {consulta} from '../database/conexao.js';
 class SelecaoRepository {
 
     create(selecao) {
-        const sql = "INSERT INTO selecoes SET ?";
-        return consulta(sql, selecao, "Não foi possível criar a seleção");
+        const campos = Object.keys(selecao || {});
+        const sql = `INSERT INTO selecoes (${campos.join(', ')}) VALUES (${campos.map((_, index) => `$${index + 1}`).join(', ')})`;
+        return consulta(sql, campos.map((campo) => selecao[campo]), "Não foi possível criar a seleção");
     }
     
     findAll() {
@@ -13,18 +14,19 @@ class SelecaoRepository {
     }
 
     findById(id) {
-        const sql = "SELECT * FROM selecoes WHERE id = ?"; 
-        return consulta(sql, id, "Não foi possível obter a lista de seleções");
+        const sql = "SELECT * FROM selecoes WHERE id = $1"; 
+        return consulta(sql, [id], "Não foi possível obter a lista de seleções");
     }
 
     update(id, selecao) {
-        const sql = "UPDATE selecoes SET ? WHERE id = ?";
-        return consulta(sql, [selecao, id], "Não foi possível atualizar a seleção");
+        const campos = Object.keys(selecao || {}).filter((campo) => campo !== 'id');
+        const sql = `UPDATE selecoes SET ${campos.map((campo, index) => `${campo} = $${index + 1}`).join(', ')} WHERE id = $${campos.length + 1}`;
+        return consulta(sql, [...campos.map((campo) => selecao[campo]), id], "Não foi possível atualizar a seleção");
     }
 
     delete(id) {
-        const sql = "DELETE FROM selecoes WHERE id = ?";
-        return consulta(sql, id, "Não foi possível excluir a seleção");
+        const sql = "DELETE FROM selecoes WHERE id = $1";
+        return consulta(sql, [id], "Não foi possível excluir a seleção");
     }
 }
 

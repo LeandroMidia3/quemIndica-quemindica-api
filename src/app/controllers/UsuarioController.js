@@ -16,11 +16,16 @@ class UsuarioController {
 
             if(rowEmail.length == 0){
                 const hashedPassword = await PasswordService.hashPassword(req.body.senha);
-                const usuarioData = { ...req.body, senha: hashedPassword };
+                const usuarioData = {
+                    ...req.body,
+                    senha: hashedPassword,
+                    datacadastro: req.body.dataCadastro ?? req.body.datacadastro ?? new Date().toISOString()
+                };
+                delete usuarioData.dataCadastro;
                 const row = await UsuarioRepository.create(usuarioData);
 
                 response.status = 200;
-                response.id = row.insertId;
+                response.id = row.length > 0 ? row[0].idusuario : 0;
                 response.message = "Sucesso";
                 response.sucess = true;
             }else{
@@ -48,12 +53,12 @@ class UsuarioController {
             const row = await UsuarioRepository.findById(req.params.id);
             
             if(row.length > 0){
-                response.id = row.insertId;
+                response.id = row[0].idusuario;
                 response.message = "Sucesso";
                 response.sucess = true;
                 response.objeto = row[0];
             }else{
-                response.id = row.insertId;
+                response.id = 0;
                 response.message = "Usuário ou senha inválidos";
             }
         }catch(error){
@@ -200,12 +205,12 @@ class UsuarioController {
             const row = await UsuarioRepository.findFavorito(idProfissional, idusuario);
             
             if(row.length > 0){
-                response.id = row.insertId;
+                response.id = row[0].idusuario;
                 response.message = "Sucesso";
                 response.sucess = true;
                 response.objeto = row[0];
             }else{
-                response.id = row.insertId;
+                response.id = 0;
                 response.sucess = false;
                 response.message = "Este profisional não está selecionado como favorito";
             }
