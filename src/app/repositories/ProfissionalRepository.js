@@ -45,7 +45,7 @@ class ProfissionalRepository {
 
     updateUrlImagem(url, idProfissional) {
         console.log("CONTROLLER API updateUrlImagem : " + idProfissional);
-        const sql = "UPDATE profissional SET uriImagemPrincipal = $1 WHERE idprofissional = $2";
+        const sql = "UPDATE profissional SET uriImagemPrincipal = $1 WHERE idprofissional = $2 RETURNING idprofissional";
         return consulta(sql, [url, idProfissional], "Não foi possível atualizar o profissional");
     }
 
@@ -57,7 +57,7 @@ class ProfissionalRepository {
 
     findAllToCard() {
         console.log("CONTROLLER API findAllToCard profissional: ");
-        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, p.cliques,
+        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, p.estado, p.cliques,
                     p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
@@ -65,7 +65,7 @@ class ProfissionalRepository {
                     INNER JOIN usuario AS u ON u.idusuario = p.idusuario 
                     WHERE u.status = 1 
                     AND p.status = 1 
-                    GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
+                    GROUP BY p.idprofissional, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, 
                     p.estado, p.cliques, p.avaliacaoMedia 
                     ORDER BY u.nome`
         return consulta(sql, [], "Não foi possível obter a lista");
@@ -73,7 +73,7 @@ class ProfissionalRepository {
 
     findToPerfil(id) {
         console.log("CONTROLLER API findToPerfil profissional: ");
-        const sql = `SELECT p.idprofissional as id, u.nome, u.idusuario, p.uriImagemPrincipal, p.telefone,
+        const sql = `SELECT p.idprofissional as id, u.nome, u.idusuario, p.uriimagemprincipal, p.telefone,
                     p.cidade, p.estado, p.servico, p.descricao, p.avaliacaoMedia, p.bairro,
                     STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
@@ -82,14 +82,14 @@ class ProfissionalRepository {
                     INNER JOIN usuario AS u ON u.idusuario = p.idusuario 
                     WHERE u.status = 1 
                     AND p.idprofissional = ${id} 
-                    GROUP BY p.idprofissional, u.nome, u.idusuario, p.uriImagemPrincipal, p.telefone, p.cidade, 
+                    GROUP BY p.idprofissional, u.nome, u.idusuario, p.uriimagemprincipal, p.telefone, p.cidade, 
                     p.estado, p.servico, p.descricao, p.avaliacaoMedia, p.bairro`;
         return consulta(sql, [], "Não foi possível obter a lista");
     }
 
     findAllFavoritoToCard(id) {
         console.log("CONTROLLER API findAllFavoritoToCard profissional: ");
-        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, 
+        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, p.estado, 
                     p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
@@ -98,7 +98,7 @@ class ProfissionalRepository {
                     INNER JOIN favorito AS f ON f.idprofissional = p.idprofissional AND f.idusuario = ${id} 
                     WHERE u.status = 1 
                     AND p.status = 1 
-                    GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
+                    GROUP BY p.idprofissional, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, 
                     p.estado, p.avaliacaoMedia 
                     ORDER BY u.nome`
         return consulta(sql, [], "Não foi possível obter a lista");
@@ -119,7 +119,7 @@ class ProfissionalRepository {
 
     findAllClicado() {
         console.log("CONTROLLER API findAllToCard profissional: ");
-        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, p.estado, p.cliques,
+        const sql = `SELECT p.idprofissional AS id, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, p.estado, p.cliques,
                     p.avaliacaoMedia, STRING_AGG(DISTINCT c.nome, ', ') AS categorias 
                     FROM profissional AS p 
                     INNER JOIN profissional_categoria AS uc ON uc.idprofissional = p.idprofissional 
@@ -128,9 +128,12 @@ class ProfissionalRepository {
                     WHERE u.status = 1 
                     AND p.cliques > 0 
                     AND p.status = 1 
-                    GROUP BY p.idprofissional, u.nome, p.uriImagemPrincipal, p.telefone, p.cidade, 
+                    GROUP BY p.idprofissional, u.nome, p.uriimagemprincipal, p.telefone, p.cidade, 
                     p.estado, p.cliques, p.avaliacaoMedia 
                     ORDER BY p.cliques desc, u.nome`
+
+                    console.log("CONTROLLER API findAllClicado profissional sql: " + sql);
+
         return consulta(sql, [], "Não foi possível obter a lista");
     }
     
