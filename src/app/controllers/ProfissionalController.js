@@ -214,16 +214,19 @@ class ProfissionalController {
                 };
 
                 if(oldProfissional.length > 0){
-            
+
                     const rowUsuario = await UsuarioRepository.update(usuario.id, usuarioUpdate);
                     const row = await ProfissionalRepository.update(profissional.id, profissionalUpdate);
-                
+
                     const apagarUsuarioCategoria = await CategoriaRepository.deleteByProfissional(profissional.id);
+
+                    console.log("apagarUsuarioCategoria row: " + JSON.stringify(apagarUsuarioCategoria));
+
                     profissional.categorias.forEach(async element => {
                         const adicionarUsuariocategoria = await CategoriaRepository.createByProfissional(profissional.id, element);
                     });
                 
-                    if(row.affectedRows > 0){
+                    if(row.length > 0){
                         response.id = parseInt(id);
                         response.message = "Sucesso";
                         response.sucess = true;

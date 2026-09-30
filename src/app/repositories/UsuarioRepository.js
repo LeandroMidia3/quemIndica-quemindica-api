@@ -35,7 +35,7 @@ class UsuarioRepository {
     }
 
     update(id, usuario) {
-        const sql = "UPDATE usuario SET nome = $1, email = $2 WHERE idusuario = $3";
+        const sql = "UPDATE usuario SET nome = $1, email = $2 WHERE idusuario = $3 RETURNING idusuario";
         return consulta(sql, [usuario.nome, usuario.email, id], "Não foi possível atualizar a usuario");
     }
 

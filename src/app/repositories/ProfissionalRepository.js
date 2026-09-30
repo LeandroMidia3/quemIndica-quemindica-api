@@ -32,7 +32,7 @@ class ProfissionalRepository {
     update(id, profissional) {
         console.log("CONTROLLER API update profissional: " + JSON.stringify(profissional));
         const campos = Object.keys(profissional).filter((campo) => campo !== 'idprofissional' && campo !== 'id');
-        const sql = `UPDATE profissional SET ${campos.map((campo, index) => `${campo} = $${index + 1}`).join(', ')} WHERE idprofissional = $${campos.length + 1}`;
+        const sql = `UPDATE profissional SET ${campos.map((campo, index) => `${campo} = $${index + 1}`).join(', ')} WHERE idprofissional = $${campos.length + 1} RETURNING idprofissional`;
         const valores = [...campos.map((campo) => profissional[campo]), id];
         return consulta(sql, valores, "Não foi possível atualizar o profissional");
     }
